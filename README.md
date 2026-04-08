@@ -2,9 +2,9 @@
 
 This repository contains the full replication package for the paper:
 
-> **[Paper Title]**
-> [Author Names]
-> [Journal Name], [Year]
+> **Suspense and Surprise in European Football**
+> Raphael Flepp, Tim Pawlowski, Travis Richardson
+> European Journal of Operational Research, 2026
 
 All scripts are written in Python and results are fully reproducible via a fixed random seed (482931). A detailed description of the methodology is provided in `documentation/suspense_documentation.pdf`.
 
@@ -176,4 +176,4 @@ This repository is released under the MIT License. See `LICENSE.txt` for full de
 ## Contact
 
 For questions about the code or methodology, please contact:
-Travis Richardson — [email to be added]
+Travis Richardson — travis-william.richardson@uni-tuebingen.de
