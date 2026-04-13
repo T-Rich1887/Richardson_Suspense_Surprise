@@ -2,9 +2,9 @@
 
 This repository contains the full replication package for the paper:
 
-> **Suspense and Surprise in European Football**
-> Raphael Flepp, Tim Pawlowski, Travis Richardson
-> European Journal of Operational Research, 2026
+> **[Paper Title]**
+> [Author Names]
+> [Journal Name], [Year]
 
 All scripts are written in Python and results are fully reproducible via a fixed random seed (482931). A detailed description of the methodology is provided in `documentation/suspense_documentation.pdf`.
 
@@ -27,7 +27,12 @@ repository/
 │   ├── build_minutebyminute_dataset.py
 │   ├── calculate_live_odds.py
 │   ├── calculate_suspense.py
-│   └── calculate_surprise_shock.py
+│   ├── calculate_surprise_shock.py
+│   ├── calculate_league_averages.py
+│   ├── calculate_team_averages.py
+│   ├── build_plotting_file.py
+│   ├── plot_league_figures.py
+│   └── calculate_descriptives.py
 │
 ├── data_corrections/
 │   ├── correct_minute_errors.py
@@ -49,6 +54,7 @@ The following Python libraries are required:
 pandas
 numpy
 scipy
+matplotlib
 pathlib
 collections
 re
@@ -58,7 +64,7 @@ glob
 Install all dependencies with:
 
 ```bash
-pip install pandas numpy scipy
+pip install pandas numpy scipy matplotlib
 ```
 
 ---
@@ -76,6 +82,8 @@ If you are applying the suspense, surprise, and shock measures to your own data 
 7. `calculate_live_odds.py` — Simulate live betting odds for each minute
 8. `calculate_suspense.py` — Calculate the suspense measure
 9. `calculate_surprise_shock.py` — Calculate the surprise measure
+
+The remaining scripts (10-15) reproduce the specific results, figures, and descriptive statistics from our paper and are not required for applying the measures to new data.
 
 **Important notes for new data:**
 - Update all file paths in the `SETTINGS` section at the top of each script
@@ -151,6 +159,31 @@ Calculates the minute-by-minute surprise measure. Surprise captures the immediat
 - Input: Suspense file (output of `calculate_suspense.py`)
 - Output: Same dataset with surprise column appended
 
+**11. `calculate_league_averages.py`**
+Aggregates the minute-by-minute data to game level, computes total suspense and surprise per match, and calculates global z-scores normalised across all seasons in the league. Also produces season-level averages.
+- Input: Surprise output CSV (output of `calculate_surprise_shock.py`)
+- Output: Excel file with two sheets — Game_Results and Season_Averages
+
+**12. `calculate_team_averages.py`**
+Calculates season-by-season average suspense and surprise for each focus team and an "Other" group covering all remaining games. Run once per league by uncommenting the relevant settings block.
+- Input: Game_Results sheet from `calculate_league_averages.py`
+- Output: Excel file with season averages per team group
+
+**13. `build_plotting_file.py`**
+Merges game-level results with season-level team averages into a single wide-format file ready for plotting. Set the `LEAGUE` variable at the top to select the league.
+- Input: Game_Results file and team averages file (outputs of scripts 11 and 12)
+- Output: Wide-format Excel file with all columns needed for plots
+
+**14. `plot_league_figures.py`**
+Generates four plots per league — raw suspense, raw surprise, z-scored suspense, and z-scored surprise — showing season-by-season boxplots, scatter points, and trend lines for each focus team and the Other group. Significance stars and benchmark bands are included. Set the `LEAGUE` variable at the top to select the league.
+- Input: Plotting file (output of `build_plotting_file.py`)
+- Output: Four PNG plots at 300 DPI
+
+**15. `calculate_descriptives.py`**
+Calculates descriptive statistics for suspense and surprise across all five leagues in four sequential steps: league-specific descriptives, global z-score standardisation, global descriptives, and minute-by-minute goal and red card distributions.
+- Input: Game_Results files from all five leagues and empirical distribution files
+- Output: Three Excel files — league descriptives, global descriptives, and goal/red card distributions
+
 ---
 
 ## Random Seed
@@ -176,4 +209,4 @@ This repository is released under the MIT License. See `LICENSE.txt` for full de
 ## Contact
 
 For questions about the code or methodology, please contact:
-Travis Richardson — travis-william.richardson@uni-tuebingen.de
+Travis Richardson — [email to be added]
