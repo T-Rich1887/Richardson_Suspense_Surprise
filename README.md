@@ -196,7 +196,9 @@ All Monte Carlo simulations use a fixed random seed of **482931** set via `np.ra
 
 If you use this code or methodology in your own work, please cite the original paper:
 
-> **[Full citation to be added upon publication]**
+> Flepp, R., Pawlowski, T., & Richardson, T. (2025). Suspense and Surprise in European Football. arXiv:2506.21253 [econ.GN]. https://doi.org/10.48550/arXiv.2506.21253
+
+A journal publication reference will be added upon acceptance.
 
 ---
 
