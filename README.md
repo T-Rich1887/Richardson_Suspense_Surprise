@@ -1,9 +1,9 @@
-# Replication Package: Calculating Suspense, Surprise, and Shock in Soccer Matches
+# Replication Package: Calculating Suspense, Surprise, and Shock in Football (Soccer) Matches
 
 This repository contains the full replication package for the paper:
 
-> **[Paper Title]**
-> [Author Names]
+> **Suspense and Surprise in European Football**
+> Raphael Flepp, Tim Pawlowski, Travis Richardson
 > [Journal Name], [Year]
 
 All scripts are written in Python and results are fully reproducible via a fixed random seed (482931). A detailed description of the methodology is provided in `documentation/suspense_documentation.pdf`.
