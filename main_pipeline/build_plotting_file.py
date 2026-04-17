@@ -10,7 +10,7 @@
 #
 # INPUT:  - Game_Results sheet from calculate_league_averages.py output
 #         - Team averages file from calculate_team_averages.py output
-# OUTPUT: Single wide-format Excel file ready for plot_league_figures.py
+# OUTPUT: Single wide-format CSV file ready for plot_league_figures.py
 # ============================================================================
  
 import pandas as pd
@@ -29,8 +29,8 @@ LEAGUE = "EPL"   # Options: "EPL", "Ligue1", "Bundesliga", "SerieA", "LaLiga"
 LEAGUE_CONFIG = {
     "EPL": {
         "game_file":    r"path/to/England_Men/Final/EPL_Final_season_averages.xlsx",
-        "team_file":    r"path/to/England_Men/Final/EPL_Final_team_averages.xlsx",
-        "output_file":  r"path/to/England_Men/Final/EPL_Final_plotting_file.xlsx",
+        "team_file":    r"path/to/England_Men/Final/EPL_Final_team_averages.csv",
+        "output_file":  r"path/to/England_Men/Final/EPL_Final_plotting_file.csv",
         "focus_teams": {
             "Manchester City": "city",
             "Arsenal":         "arsenal",
@@ -39,8 +39,8 @@ LEAGUE_CONFIG = {
     },
     "Ligue1": {
         "game_file":    r"path/to/France_Men/Final/Ligue1_Final_season_averages.xlsx",
-        "team_file":    r"path/to/France_Men/Final/Ligue1_Final_team_averages.xlsx",
-        "output_file":  r"path/to/France_Men/Final/Ligue1_Final_plotting_file.xlsx",
+        "team_file":    r"path/to/France_Men/Final/Ligue1_Final_team_averages.csv",
+        "output_file":  r"path/to/France_Men/Final/Ligue1_Final_plotting_file.csv",
         "focus_teams": {
             "Paris Saint-Germain": "psg",
             "Lyon":                "lyon",
@@ -49,8 +49,8 @@ LEAGUE_CONFIG = {
     },
     "Bundesliga": {
         "game_file":    r"path/to/Germany_Men/Final/Bundesliga_Final_season_averages.xlsx",
-        "team_file":    r"path/to/Germany_Men/Final/Bundesliga_Final_team_averages.xlsx",
-        "output_file":  r"path/to/Germany_Men/Final/Bundesliga_Final_plotting_file.xlsx",
+        "team_file":    r"path/to/Germany_Men/Final/Bundesliga_Final_team_averages.csv",
+        "output_file":  r"path/to/Germany_Men/Final/Bundesliga_Final_plotting_file.csv",
         "focus_teams": {
             "Bayern Munich":   "bayern",
             "Dortmund":        "dortmund",
@@ -59,8 +59,8 @@ LEAGUE_CONFIG = {
     },
     "SerieA": {
         "game_file":    r"path/to/Italy_Men/Final/SerieA_Final_season_averages.xlsx",
-        "team_file":    r"path/to/Italy_Men/Final/SerieA_Final_team_averages.xlsx",
-        "output_file":  r"path/to/Italy_Men/Final/SerieA_Final_plotting_file.xlsx",
+        "team_file":    r"path/to/Italy_Men/Final/SerieA_Final_team_averages.csv",
+        "output_file":  r"path/to/Italy_Men/Final/SerieA_Final_plotting_file.csv",
         "focus_teams": {
             "Juventus":       "juventus",
             "Napoli":         "napoli",
@@ -69,8 +69,8 @@ LEAGUE_CONFIG = {
     },
     "LaLiga": {
         "game_file":    r"path/to/Spain_Men/Final/LaLiga_Final_season_averages.xlsx",
-        "team_file":    r"path/to/Spain_Men/Final/LaLiga_Final_team_averages.xlsx",
-        "output_file":  r"path/to/Spain_Men/Final/LaLiga_Final_plotting_file.xlsx",
+        "team_file":    r"path/to/Spain_Men/Final/LaLiga_Final_team_averages.csv",
+        "output_file":  r"path/to/Spain_Men/Final/LaLiga_Final_plotting_file.csv",
         "focus_teams": {
             "Real Madrid":    "realmadrid",
             "Barcelona":      "barcelona",
@@ -92,7 +92,7 @@ team_map    = {**focus_teams, "Other": "other"}
 # ============================================================================
  
 games     = pd.read_excel(config["game_file"], sheet_name="Game_Results")
-team_avgs = pd.read_excel(config["team_file"])
+team_avgs = pd.read_csv(config["team_file"])
  
 # Extract home and away teams from match_id
 teams_split        = games['match_id'].str.split('_', n=2, expand=True)
@@ -154,5 +154,5 @@ final_df = final_df[base_cols + team_cols]
 # SAVE
 # ============================================================================
  
-final_df.to_excel(config["output_file"], index=False)
+final_df.to_csv(config["output_file"], index=False)
 print(f" {LEAGUE} plotting file saved to:\n{config['output_file']}")

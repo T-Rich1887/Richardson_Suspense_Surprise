@@ -11,9 +11,9 @@
 # The output is one row per minute per match (92 rows per match), with
 # cumulative score and red card counts built up minute by minute.
 #
-# INPUT:  - Combined goals/reds file
+# INPUT:  - Combined goals/reds CSV file (output of combine_season_files.py)
 #         - Predicted goals CSV (output of fit_scoring_rates.py)
-#         - Empirical goal distribution Excel file
+#         - Empirical goal distribution CSV file (output of build_empirical_distribution.py)
 # OUTPUT: Minute-by-minute CSV ready for calculate_live_odds.py
 #
 # NOTE ON TEAM NAME MAPPING:
@@ -33,9 +33,9 @@ from pathlib import Path
 # SETTINGS - EDIT THESE FOR YOUR LEAGUE
 # ============================================================================
  
-GOALS_REDS_FILE      = r"path/to/your/allseasons_goals_reds.xlsx"
+GOALS_REDS_FILE      = r"path/to/your/allseasons_goals_reds.csv"
 PREDICTED_GOALS_FILE = r"path/to/your/predicted_goals.csv"
-GOAL_DIST_FILE       = r"path/to/your/empirical_goal_distribution.xlsx"
+GOAL_DIST_FILE       = r"path/to/your/empirical_goal_distribution.csv"
 OUTPUT_FILE          = r"path/to/your/get_minute_betting_odds.csv"
  
 # ============================================================================
@@ -255,7 +255,7 @@ def process_league_data():
     # STEP 1: LOAD GOALS / REDS
     # ============================================================================
  
-    df_goals_reds = pd.read_excel(GOALS_REDS_FILE)
+    df_goals_reds = pd.read_csv(GOALS_REDS_FILE)
  
     # ============================================================================
     # STEP 2: LOAD AND PROCESS PREDICTED GOALS DATA
@@ -302,7 +302,7 @@ def process_league_data():
     # per-minute scoring probabilities for each team
     # ============================================================================
  
-    goal_dist = pd.read_excel(GOAL_DIST_FILE)
+    goal_dist = pd.read_csv(GOAL_DIST_FILE)
  
     league_data_repeated = league_data_repeated.merge(
         goal_dist[['minute', 'percentage']],
@@ -414,4 +414,3 @@ def process_league_data():
  
 if __name__ == "__main__":
     process_league_data()
- 

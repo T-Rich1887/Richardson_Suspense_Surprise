@@ -13,7 +13,7 @@
 # Leagues covered: Ligue 1 (France), Bundesliga (Germany), La Liga (Spain)
 #
 # INPUT:  Combined all-seasons goals/reds file (one per league)
-# OUTPUT: Corrected file with fixed team names and rebuilt match_ids
+# OUTPUT: Corrected CSV file with fixed team names and rebuilt match_ids
 # ============================================================================
  
 import pandas as pd
@@ -41,8 +41,8 @@ LEAGUES = {
     # LIGUE 1 (FRANCE)
     # --------------------------------------------------------------------------
     "Ligue1": {
-        "input":  FRANCE_DIR / "Ligue1_allseasons_goals_reds.xlsx",
-        "output": FRANCE_DIR / "Ligue1_allseasons_goals_reds_FIXEDNAMES.xlsx",
+        "input":  FRANCE_DIR / "Ligue1_allseasons_goals_reds.csv",
+        "output": FRANCE_DIR / "Ligue1_allseasons_goals_reds_FIXEDNAMES.csv",
         "fixes": {
             "NÃ®mes":            "Nîmes",
             "Saint-Ã‰tienne":    "Saint-Étienne",
@@ -55,8 +55,8 @@ LEAGUES = {
     # BUNDESLIGA (GERMANY)
     # --------------------------------------------------------------------------
     "Bundesliga": {
-        "input":  GERMANY_DIR / "Bundesliga_allseasons_goals_reds.xlsx",
-        "output": GERMANY_DIR / "Bundesliga_allseasons_goals_reds_FIXEDNAMES.xlsx",
+        "input":  GERMANY_DIR / "Bundesliga_allseasons_goals_reds.csv",
+        "output": GERMANY_DIR / "Bundesliga_allseasons_goals_reds_FIXEDNAMES.csv",
         "fixes": {
             "KÃ¶ln":            "Köln",
             "MÃ¶nchengladbach": "Mönchengladbach",
@@ -72,8 +72,8 @@ LEAGUES = {
     # (some clubs appear under different names across seasons)
     # --------------------------------------------------------------------------
     "LaLiga": {
-        "input":  SPAIN_DIR / "LaLiga_allseasons_goals_reds.xlsx",
-        "output": SPAIN_DIR / "LaLiga_allseasons_goals_reds_FIXEDNAMES.xlsx",
+        "input":  SPAIN_DIR / "LaLiga_allseasons_goals_reds.csv",
+        "output": SPAIN_DIR / "LaLiga_allseasons_goals_reds_FIXEDNAMES.csv",
         "fixes": {
             # Encoding fixes
             "AlavÃ©s":                "Alavés",
@@ -108,7 +108,7 @@ def fix_team_names(league_key, config):
  
     print(f"\nProcessing: {league_key}")
  
-    df = pd.read_excel(config["input"])
+    df = pd.read_csv(config["input"])
  
     df["Home_Team"] = df["Home_Team"].replace(config["fixes"])
     df["Away_Team"] = df["Away_Team"].replace(config["fixes"])
@@ -120,7 +120,7 @@ def fix_team_names(league_key, config):
         df["Away_Team"]
     )
  
-    df.to_excel(config["output"], index=False)
+    df.to_csv(config["output"], index=False)
  
     print(f"  Unique home teams: {df['Home_Team'].nunique()}")
     print(f"  Unique away teams: {df['Away_Team'].nunique()}")

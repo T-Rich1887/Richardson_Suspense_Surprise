@@ -18,7 +18,7 @@
 #      away and total goals and red cards per league and combined
 #
 # INPUT:  - Game_Results sheet from calculate_league_averages.py (5 leagues)
-#         - Empirical distribution files from build_empirical_distributions.py
+#         - Empirical distribution CSV files from build_empirical_distributions.py
 # OUTPUT: Three Excel files saved to the output directories below
 # ============================================================================
  
@@ -39,11 +39,11 @@ LEAGUE_FILES = {
 }
  
 DIST_FILES = {
-    "EPL":        r"path/to/England_Men/Goal_Distribution/EPL_ALLSEASONS_empdist_goals_reds.xlsx",
-    "Bundesliga": r"path/to/Germany_Men/Goal_Distribution/Bundesliga_ALLSEASONS_empdist_goals_reds.xlsx",
-    "LaLiga":     r"path/to/Spain_Men/Goal_Distribution/LaLiga_ALLSEASONS_empdist_goals_reds.xlsx",
-    "SerieA":     r"path/to/Italy_Men/Goal_Distribution/SerieA_ALLSEASONS_empdist_goals_reds.xlsx",
-    "Ligue1":     r"path/to/France_Men/Goal_Distribution/Ligue1_ALLSEASONS_empdist_goals_reds.xlsx",
+    "EPL":        r"path/to/England_Men/Goal_Distribution/EPL_ALLSEASONS_empdist_goals_reds.csv",
+    "Bundesliga": r"path/to/Germany_Men/Goal_Distribution/Bundesliga_ALLSEASONS_empdist_goals_reds.csv",
+    "LaLiga":     r"path/to/Spain_Men/Goal_Distribution/LaLiga_ALLSEASONS_empdist_goals_reds.csv",
+    "SerieA":     r"path/to/Italy_Men/Goal_Distribution/SerieA_ALLSEASONS_empdist_goals_reds.csv",
+    "Ligue1":     r"path/to/France_Men/Goal_Distribution/Ligue1_ALLSEASONS_empdist_goals_reds.csv",
 }
  
 DESCRIPTIVES_OUTPUT = r"path/to/Descriptives/Suspense_Surprise_Descriptives.xlsx"
@@ -194,7 +194,7 @@ combined_dist = None
  
 for league, path in DIST_FILES.items():
     print(f"  Processing {league}...")
-    df             = pd.read_excel(path)
+    df             = pd.read_csv(path)
     league_dist_df = build_minute_counts(df)
     league_dist_df = add_total_row(league_dist_df)
     league_sheets[league] = league_dist_df.copy()
@@ -215,4 +215,4 @@ with pd.ExcelWriter(DIST_OUTPUT, engine="xlsxwriter") as writer:
 print(f"  Saved to: {DIST_OUTPUT}")
 print("Step 4 complete!")
  
-print("\n✅ All descriptive statistics complete!")
+print("\n All descriptive statistics complete!")

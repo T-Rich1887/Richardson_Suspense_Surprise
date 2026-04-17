@@ -17,25 +17,25 @@
 # INPUT:  Plotting file (output of build_plotting_file.py)
 # OUTPUT: Four PNG plots saved to the league's Plots folder
 # ============================================================================
-
+ 
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-
+ 
 # ============================================================================
 # SETTINGS - SET YOUR LEAGUE HERE
 # ============================================================================
-
+ 
 LEAGUE = "EPL"   # Options: "EPL", "Ligue1", "Bundesliga", "SerieA", "LaLiga"
-
+ 
 # ============================================================================
 # LEAGUE CONFIGURATIONS
 # ============================================================================
-
+ 
 LEAGUE_CONFIG = {
     "EPL": {
-        "input_file": r"path/to/England_Men/Final/EPL_Final_plotting_file.xlsx",
+        "input_file": r"path/to/England_Men/Final/EPL_Final_plotting_file.csv",
         "output_dir": r"path/to/England_Men/Plots",
         "focus_teams": {
             "Manchester City": ("city",      "blue"),
@@ -75,9 +75,9 @@ LEAGUE_CONFIG = {
             2023: set(),
         },
     },
-
+ 
     "Ligue1": {
-        "input_file": r"path/to/France_Men/Final/Ligue1_Final_plotting_file.xlsx",
+        "input_file": r"path/to/France_Men/Final/Ligue1_Final_plotting_file.csv",
         "output_dir": r"path/to/France_Men/Plots",
         "focus_teams": {
             "Paris Saint-Germain": ("psg",       "darkblue"),
@@ -117,9 +117,9 @@ LEAGUE_CONFIG = {
             2023: set(),
         },
     },
-
+ 
     "Bundesliga": {
-        "input_file": r"path/to/Germany_Men/Final/Bundesliga_Final_plotting_file.xlsx",
+        "input_file": r"path/to/Germany_Men/Final/Bundesliga_Final_plotting_file.csv",
         "output_dir": r"path/to/Germany_Men/Plots",
         "focus_teams": {
             "Bayern Munich":    ("bayern",     "red"),
@@ -159,9 +159,9 @@ LEAGUE_CONFIG = {
             2023: set(),
         },
     },
-
+ 
     "SerieA": {
-        "input_file": r"path/to/Italy_Men/Final/SerieA_Final_plotting_file.xlsx",
+        "input_file": r"path/to/Italy_Men/Final/SerieA_Final_plotting_file.csv",
         "output_dir": r"path/to/Italy_Men/Plots",
         "focus_teams": {
             "Juventus":       ("juventus", "black"),
@@ -201,9 +201,9 @@ LEAGUE_CONFIG = {
             2023: {'Internazionale'},
         },
     },
-
+ 
     "LaLiga": {
-        "input_file": r"path/to/Spain_Men/Final/LaLiga_Final_plotting_file.xlsx",
+        "input_file": r"path/to/Spain_Men/Final/LaLiga_Final_plotting_file.csv",
         "output_dir": r"path/to/Spain_Men/Plots",
         "focus_teams": {
             "Real Madrid":     ("realmadrid", "purple"),
@@ -244,90 +244,90 @@ LEAGUE_CONFIG = {
         },
     },
 }
-
+ 
 # ============================================================================
 # BENCHMARK BANDS (same for all leagues)
 # ============================================================================
-
+ 
 BENCHMARK_BANDS = {
     'suspense': (6.08, 6.70),
     'surprise': (1.34, 1.99),
 }
-
+ 
 # ============================================================================
 # LOAD CONFIG AND DATA
 # ============================================================================
-
+ 
 config      = LEAGUE_CONFIG[LEAGUE]
 focus_teams = config["focus_teams"]
 other_color = 'black'
-
+ 
 os.makedirs(config["output_dir"], exist_ok=True)
-
-df = pd.read_excel(config["input_file"])
+ 
+df = pd.read_csv(config["input_file"])
 df['season_label'] = 2000 + df['season'].astype(str).str[:2].astype(int)
-
+ 
 # ============================================================================
 # TEAM CATEGORIZATION
 # ============================================================================
-
+ 
 def categorize_team(row):
     for team in focus_teams:
         if row['home_team'] == team or row['away_team'] == team:
             return team
     return 'Other Teams'
-
+ 
 df['Team_Category'] = df.apply(categorize_team, axis=1)
-
+ 
 # ============================================================================
 # BUILD TEAM COLOR MAP (for significance stars)
 # ============================================================================
-
+ 
 team_colors = {team: color for team, (_, color) in focus_teams.items()}
 team_colors['Other Teams'] = other_color
-
+ 
 # ============================================================================
 # METRICS TO PLOT
 # ============================================================================
-
+ 
 metrics = [
     ('suspense',   'average_suspense',   f'{LEAGUE} Match Suspense',           f'{LEAGUE}_suspense.png',   config["significance_suspense"]),
     ('surprise',   'average_surprise',   f'{LEAGUE} Match Surprise',           f'{LEAGUE}_surprise.png',   config["significance_surprise"]),
     ('suspense_z', 'average_suspense_z', f'{LEAGUE} Match Suspense (Z-score)', f'{LEAGUE}_suspense_z.png', None),
     ('surprise_z', 'average_surprise_z', f'{LEAGUE} Match Surprise (Z-score)', f'{LEAGUE}_surprise_z.png', None),
 ]
-
+ 
 # ============================================================================
 # PLOTTING LOOP
 # ============================================================================
-
+ 
 for value_col, avg_suffix, title, filename, significance in metrics:
-
+ 
     fig, ax = plt.subplots(figsize=(18, 8))
-
+ 
     unique_years = np.unique(df['season_label'])
     positions    = np.arange(0, len(unique_years) * 2, 2)
     box_width    = 0.2
     alpha        = 0.5
-
+ 
     # --- Benchmark band ---
     if value_col in BENCHMARK_BANDS:
         band_low, band_high = BENCHMARK_BANDS[value_col]
         ax.axhspan(band_low, band_high, color='grey', alpha=0.25, zorder=0)
-
+ 
     team_positions = {}
-
+ 
     # --- Focus teams ---
     for idx, (team, (prefix, color)) in enumerate(focus_teams.items()):
         team_data    = df[df['Team_Category'] == team]
         box_positions = positions + idx * box_width - box_width
         team_positions[team] = dict(zip(unique_years, box_positions))
-
+ 
         data_by_year = [
             team_data[team_data['season_label'] == year][value_col].values
             for year in unique_years
         ]
-
+ 
         ax.boxplot(
             data_by_year,
             positions=box_positions,
@@ -339,11 +339,11 @@ for value_col, avg_suffix, title, filename, significance in metrics:
             medianprops=dict(color='black'),
             flierprops=dict(markerfacecolor=color, marker='o', markersize=5, linestyle='none')
         )
-
+ 
         for year, pos in zip(unique_years, box_positions):
             y_data = team_data[team_data['season_label'] == year][value_col]
             ax.scatter(np.full(y_data.shape, pos), y_data, color=color, alpha=0.7, s=10)
-
+ 
         avg_col  = f'{prefix}_{avg_suffix}'
         avg_data = (
             df[df['Team_Category'] == team]
@@ -351,17 +351,17 @@ for value_col, avg_suffix, title, filename, significance in metrics:
             .mean()
         )
         ax.plot(box_positions, avg_data.values, color=color, linewidth=2, label=team)
-
+ 
     # --- Other teams ---
     other_positions = positions + len(focus_teams) * box_width - box_width
     team_positions['Other Teams'] = dict(zip(unique_years, other_positions))
     other_data = df[df['Team_Category'] == 'Other Teams']
-
+ 
     data_by_year = [
         other_data[other_data['season_label'] == year][value_col].values
         for year in unique_years
     ]
-
+ 
     ax.boxplot(
         data_by_year,
         positions=other_positions,
@@ -373,11 +373,11 @@ for value_col, avg_suffix, title, filename, significance in metrics:
         medianprops=dict(color='black'),
         flierprops=dict(markerfacecolor=other_color, marker='o', markersize=5, linestyle='none')
     )
-
+ 
     for year, pos in zip(unique_years, other_positions):
         y_data = other_data[other_data['season_label'] == year][value_col]
         ax.scatter(np.full(y_data.shape, pos), y_data, color=other_color, alpha=0.7, s=10)
-
+ 
     other_avg_col = f'other_{avg_suffix}'
     other_avg     = (
         df[df['Team_Category'] == 'Other Teams']
@@ -385,14 +385,14 @@ for value_col, avg_suffix, title, filename, significance in metrics:
         .mean()
     )
     ax.plot(other_positions, other_avg.values, color=other_color, linewidth=2, label='Other Teams')
-
+ 
     # --- Significance stars ---
     if significance is not None:
         y_min, y_max = ax.get_ylim()
         ax.set_ylim(y_min, y_max * 1.12)
         y_min, y_max = ax.get_ylim()
         y_range = y_max - y_min
-
+ 
         for year, starred_teams in significance.items():
             if year not in unique_years:
                 continue
@@ -408,7 +408,7 @@ for value_col, avg_suffix, title, filename, significance in metrics:
                     fontsize=18, color=star_color,
                     fontweight='bold', zorder=10
                 )
-
+ 
     # --- Axes and labels ---
     ax.set_title(title)
     ax.set_xlabel('Season')
@@ -417,19 +417,19 @@ for value_col, avg_suffix, title, filename, significance in metrics:
     ax.grid(True)
     ax.set_xticks(positions)
     ax.set_xticklabels(unique_years, rotation=45)
-
+ 
     if value_col.endswith('_z'):
         ax.set_ylim(-3, 3)
-
+ 
     fig.subplots_adjust(top=0.92, bottom=0.15)
-
+ 
     plt.savefig(
         os.path.join(config["output_dir"], filename),
         dpi=300,
         bbox_inches='tight'
     )
     plt.close()
-
+ 
     print(f"  Saved: {filename}")
-
+ 
 print(f"\n All 4 {LEAGUE} plots created successfully.")

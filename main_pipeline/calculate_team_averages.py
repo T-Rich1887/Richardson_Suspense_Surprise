@@ -14,7 +14,7 @@
 #
 # INPUT:  Game-level results Excel file (output of calculate_league_averages.py,
 #         Game_Results sheet)
-# OUTPUT: Excel file with season averages per team group
+# OUTPUT: CSV file with season averages per team group
 # ============================================================================
  
 import pandas as pd
@@ -25,27 +25,27 @@ import pandas as pd
  
 # --- EPL (England) ---
 INPUT_FILE   = r"path/to/England_Men/Final/EPL_Final_season_averages.xlsx"
-OUTPUT_FILE  = r"path/to/England_Men/Final/EPL_Final_team_averages.xlsx"
+OUTPUT_FILE  = r"path/to/England_Men/Final/EPL_Final_team_averages.csv"
 FOCUS_TEAMS  = ['Manchester City', 'Arsenal', 'Liverpool']
  
 # --- Ligue 1 (France) ---
 # INPUT_FILE   = r"path/to/France_Men/Final/Ligue1_Final_season_averages.xlsx"
-# OUTPUT_FILE  = r"path/to/France_Men/Final/Ligue1_Final_team_averages.xlsx"
+# OUTPUT_FILE  = r"path/to/France_Men/Final/Ligue1_Final_team_averages.csv"
 # FOCUS_TEAMS  = ['Paris Saint-Germain', 'Lyon', 'Marseille']
  
 # --- Bundesliga (Germany) ---
 # INPUT_FILE   = r"path/to/Germany_Men/Final/Bundesliga_Final_season_averages.xlsx"
-# OUTPUT_FILE  = r"path/to/Germany_Men/Final/Bundesliga_Final_team_averages.xlsx"
+# OUTPUT_FILE  = r"path/to/Germany_Men/Final/Bundesliga_Final_team_averages.csv"
 # FOCUS_TEAMS  = ['Bayern Munich', 'Dortmund', 'Bayer Leverkusen']
  
 # --- Serie A (Italy) ---
 # INPUT_FILE   = r"path/to/Italy_Men/Final/SerieA_Final_season_averages.xlsx"
-# OUTPUT_FILE  = r"path/to/Italy_Men/Final/SerieA_Final_team_averages.xlsx"
+# OUTPUT_FILE  = r"path/to/Italy_Men/Final/SerieA_Final_team_averages.csv"
 # FOCUS_TEAMS  = ['Juventus', 'Napoli', 'Internazionale']
  
 # --- La Liga (Spain) ---
 # INPUT_FILE   = r"path/to/Spain_Men/Final/LaLiga_Final_season_averages.xlsx"
-# OUTPUT_FILE  = r"path/to/Spain_Men/Final/LaLiga_Final_team_averages.xlsx"
+# OUTPUT_FILE  = r"path/to/Spain_Men/Final/LaLiga_Final_team_averages.csv"
 # FOCUS_TEAMS  = ['Real Madrid', 'Barcelona', 'Atlético Madrid']
  
 # ============================================================================
@@ -109,6 +109,6 @@ final_df = final_df[[
     'suspense_z', 'surprise_z'
 ]]
  
-final_df.to_excel(OUTPUT_FILE, index=False)
+final_df.to_csv(OUTPUT_FILE, index=False)
  
 print(f" Team averages saved to:\n{OUTPUT_FILE}")

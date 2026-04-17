@@ -12,11 +12,11 @@
 #   3. Build the final empirical distributions (one for goals, one for reds)
 #
 # INPUT:  Folder of cleaned goals/reds files (one per season)
-# OUTPUT: Two Excel files:
-#           - empirical_goal_distribution.xlsx (minute 1-92, count, percentage)
-#           - empirical_red_distribution.xlsx  (minute 1-92, count, percentage)
+# OUTPUT: Two CSV files:
+#           - empirical_goal_distribution.csv (minute 1-92, count, percentage)
+#           - empirical_red_distribution.csv  (minute 1-92, count, percentage)
 # ============================================================================
- 
+
 import pandas as pd
 from pathlib import Path
  
@@ -68,14 +68,14 @@ def build_empirical_distribution(series):
  
 print("Step 1: Extracting goal and red card minutes from season files...")
  
-season_files = sorted(GOALS_REDS_DIR.glob("*_goals_reds.xlsx"))
+season_files = sorted(GOALS_REDS_DIR.glob("*_goals_reds.csv"))
 print(f"Found {len(season_files)} season files")
  
 season_dfs = []
  
 for file in season_files:
     print(f"  Processing {file.name}")
-    df = pd.read_excel(file)
+    df = pd.read_csv(file)
  
     home_goal_cols = [c for c in df.columns if c.startswith("homegoal")]
     away_goal_cols = [c for c in df.columns if c.startswith("awaygoal")]
@@ -132,8 +132,8 @@ print("\nStep 2: Combining all seasons...")
  
 combined_df = pd.concat(season_dfs, ignore_index=True)
  
-combined_file = OUTPUT_DIR / f"{LEAGUE_NAME}_ALLSEASONS_empdist_goals_reds.xlsx"
-combined_df.to_excel(combined_file, index=False)
+combined_file = OUTPUT_DIR / f"{LEAGUE_NAME}_ALLSEASONS_empdist_goals_reds.csv"
+combined_df.to_csv(combined_file, index=False)
  
 print(f"  Combined file: {len(combined_df)} rows")
 print(f"  Saved to: {combined_file}")
@@ -148,11 +148,11 @@ print("\nStep 3: Building empirical distributions...")
 goal_dist = build_empirical_distribution(combined_df["all_goal_minute"])
 red_dist  = build_empirical_distribution(combined_df["all_red_minute"])
  
-goal_output = OUTPUT_DIR / f"{LEAGUE_NAME}_ALLSEASONS_empirical_goal_distribution.xlsx"
-red_output  = OUTPUT_DIR / f"{LEAGUE_NAME}_ALLSEASONS_empirical_red_distribution.xlsx"
+goal_output = OUTPUT_DIR / f"{LEAGUE_NAME}_ALLSEASONS_empirical_goal_distribution.csv"
+red_output  = OUTPUT_DIR / f"{LEAGUE_NAME}_ALLSEASONS_empirical_red_distribution.csv"
  
-goal_dist.to_excel(goal_output, index=False)
-red_dist.to_excel(red_output,  index=False)
+goal_dist.to_csv(goal_output, index=False)
+red_dist.to_csv(red_output, index=False)
  
 print(f"  Goals: {goal_dist['count'].sum()} total across all minutes")
 print(f"  Reds:  {red_dist['count'].sum()} total across all minutes")
