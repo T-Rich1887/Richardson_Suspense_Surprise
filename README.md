@@ -211,4 +211,4 @@ This repository is released under the MIT License. See `LICENSE.txt` for full de
 ## Contact
 
 For questions about the code or methodology, please contact:
-Travis Richardson — [email to be added]
+Travis Richardson — travis-william.richardson@uni-tuebingen.de
