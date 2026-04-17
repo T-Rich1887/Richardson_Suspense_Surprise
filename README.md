@@ -2,12 +2,11 @@
 
 This repository contains the full replication package for the paper:
 
-> **Suspense and Surprise in European Football**
-> Raphael Flepp, Tim Pawlowski, Travis Richardson
-> European Journal of Operational Research, 2026
+> **[Paper Title]**
+> [Author Names]
+> [Journal Name], [Year]
 
 All scripts are written in Python and results are fully reproducible via a fixed random seed (482931). A detailed description of the methodology is provided in `documentation/suspense_documentation.pdf`.
-
 
 ---
 
@@ -80,7 +79,7 @@ If you are applying the suspense, surprise, and shock measures to your own data 
 4. `combine_season_files.py` — Combine individual season files into one
 5. `build_empirical_distributions.py` — Build minute-by-minute goal and red card distributions
 6. `build_minutebyminute_dataset.py` — Merge all inputs into a minute-by-minute dataset
-7. `calculate_live_odds.py` — Simulate live betting odds for each minute
+7. `calculate_live_odds.py` — Simulate live betting odds using 100,000 Monte Carlo draws per game-minute
 8. `calculate_suspense.py` — Calculate the suspense measure
 9. `calculate_surprise_shock.py` — Calculate the surprise measure
 
@@ -112,77 +111,77 @@ Run these scripts in order after all data corrections have been applied.
 
 **1. `clean_bookmaker_odds.py`**
 Converts raw bookmaker odds to true implied probabilities by removing the overround. Processes both match result odds (home/draw/away) and over/under goal line odds (0.5 through 5.5).
-- Input: Raw odds Excel file (one row per match)
-- Output: Cleaned odds Excel file with implied probabilities appended
+- Input: Raw bookmaker odds Excel file (one row per match, from data source)
+- Output: Cleaned odds CSV file with implied probabilities appended
 
 **2. `fit_scoring_rates.py`**
 Fits Poisson-based scoring rates to the cleaned bookmaker odds for each match using a grid search over 3,600 lambda pairs. Selects the home and away scoring rate combination that minimizes the sum of squared errors between model predictions and observed odds.
-- Input: Cleaned odds file (output of `clean_bookmaker_odds.py`)
-- Output: CSV file with predicted home and away scoring rates appended
+- Input: Cleaned odds CSV file (output from `clean_bookmaker_odds.py`)
+- Output: Predicted scoring rates CSV file with home and away lambdas appended
 
 **3. `extract_goals_reds.py`**
 Extracts goal and red card minutes from raw match event files. Handles stoppage time correctly by condensing first-half stoppage time into minute 46 and second-half stoppage time into minute 92. Outputs one cleaned file per season.
-- Input: Folder of raw match event Excel files (one per season)
-- Output: Folder of cleaned files with goal and red card minutes in wide format
+- Input: Folder of raw match event Excel files (one per season, from data source)
+- Output: Folder of cleaned CSV files with goal and red card minutes in wide format
 
 **4. `combine_season_files.py`**
 Combines all individual season goals/reds files into a single all-seasons file.
-- Input: Folder of individual season goals/reds files
-- Output: Single combined Excel file
+- Input: Folder of cleaned goals/reds CSV files (output from `extract_goals_reds.py`)
+- Output: Single combined goals/reds CSV file
 
 **5. `build_empirical_distributions.py`**
 Builds the empirical minute-by-minute goal and red card distributions across all seasons. These distributions are used to scale per-match scoring rates into per-minute scoring probabilities.
-- Input: Folder of cleaned goals/reds files
-- Output: Two Excel files — empirical goal distribution and empirical red card distribution (both covering minutes 1-92)
+- Input: Folder of cleaned goals/reds CSV files (output from `extract_goals_reds.py`)
+- Output: Two CSV files — empirical goal distribution and empirical red card distribution (both covering minutes 1-92)
 
 **6. `fix_team_names.py`**
 Fixes broken character encodings and normalizes team names across seasons for Ligue 1, Bundesliga, and La Liga. This ensures team names match correctly when merging data sources.
-- Input: Combined all-seasons goals/reds file (one per league)
-- Output: Corrected file with fixed team names and rebuilt match IDs
+- Input: Combined goals/reds CSV file (output from `combine_season_files.py`)
+- Output: Corrected goals/reds CSV file with fixed team names and rebuilt match IDs
 
 **7. `build_minutebyminute_dataset.py`**
 Merges the predicted scoring rates, empirical goal distribution, and goals/red card data into a single minute-by-minute dataset with 92 rows per match. Also builds cumulative score and red card counters for each minute.
-- Input: Predicted goals CSV, goals/reds Excel file, empirical goal distribution Excel file
-- Output: Minute-by-minute CSV ready for the main calculations
+- Input: Predicted scoring rates CSV (output from `fit_scoring_rates.py`), combined goals/reds CSV (output from `combine_season_files.py`), empirical goal distribution CSV (output from `build_empirical_distributions.py`)
+- Output: Minute-by-minute CSV file ready for live odds calculation
 
 **8. `calculate_live_odds.py`**
-Simulates minute-by-minute live betting odds using 100,000 Monte Carlo draws per game. Adjusts scoring rates for red cards and produces two sets of odds: standard live odds and counterfactual no-goal-no-red odds.
-- Input: Minute-by-minute dataset (output of `build_minutebyminute_dataset.py`)
+Simulates minute-by-minute live betting odds using 100,000 Monte Carlo draws per game-minute. Adjusts scoring rates for red cards and produces two sets of odds: standard live odds and counterfactual no-goal-no-red odds.
+- Input: Minute-by-minute CSV file (output from `build_minutebyminute_dataset.py`)
 - Output: Same dataset with six new columns of live odds appended
 
 **9. `calculate_suspense.py`**
 Calculates the minute-by-minute suspense measure. Suspense at minute t captures how much the outcome probabilities would change if either team scored in minute t+1, weighted by the probability of scoring in that next minute.
-- Input: Live odds file (output of `calculate_live_odds.py`)
+- Input: Minute-by-minute CSV file with live odds (output from `calculate_live_odds.py`)
 - Output: Same dataset with suspense and hypothetical probability columns appended
 
 **10. `calculate_surprise_shock.py`**
 Calculates the minute-by-minute surprise measure. Surprise captures the immediate change in outcome probabilities from one minute to the next. A shock value is calculated internally and substituted for surprise in minute 1 when a goal or red card occurs.
-- Input: Suspense file (output of `calculate_suspense.py`)
+- Input: Minute-by-minute CSV file with suspense (output from `calculate_suspense.py`)
 - Output: Same dataset with surprise column appended
 
 **11. `calculate_league_averages.py`**
-Aggregates the minute-by-minute data to game level, computes total suspense and surprise per match, and calculates global z-scores normalised across all seasons in the league. Also produces season-level averages.
-- Input: Surprise output CSV (output of `calculate_surprise_shock.py`)
+Aggregates the minute-by-minute data to game level, computes total suspense and surprise per match, and calculates league-level z-scores normalised across all seasons. Also produces season-level averages.
+- Input: Minute-by-minute CSV file with surprise (output from `calculate_surprise_shock.py`)
 - Output: Excel file with two sheets — Game_Results and Season_Averages
 
 **12. `calculate_team_averages.py`**
 Calculates season-by-season average suspense and surprise for each focus team and an "Other" group covering all remaining games. Run once per league by uncommenting the relevant settings block.
-- Input: Game_Results sheet from `calculate_league_averages.py`
-- Output: Excel file with season averages per team group
+- Input: Game_Results sheet from league averages Excel file (output from `calculate_league_averages.py`)
+- Output: Team averages CSV file with season averages per team group
 
 **13. `build_plotting_file.py`**
 Merges game-level results with season-level team averages into a single wide-format file ready for plotting. Set the `LEAGUE` variable at the top to select the league.
-- Input: Game_Results file and team averages file (outputs of scripts 11 and 12)
-- Output: Wide-format Excel file with all columns needed for plots
+- Input: League averages Excel file (output from `calculate_league_averages.py`) and team averages CSV file (output from `calculate_team_averages.py`)
+- Output: Wide-format CSV file with all columns needed for plots
 
 **14. `plot_league_figures.py`**
 Generates four plots per league — raw suspense, raw surprise, z-scored suspense, and z-scored surprise — showing season-by-season boxplots, scatter points, and trend lines for each focus team and the Other group. Significance stars and benchmark bands are included. Set the `LEAGUE` variable at the top to select the league.
-- Input: Plotting file (output of `build_plotting_file.py`)
+- Input: Wide-format plotting CSV file (output from `build_plotting_file.py`)
 - Output: Four PNG plots at 300 DPI
 
 **15. `calculate_descriptives.py`**
 Calculates descriptive statistics for suspense and surprise across all five leagues in four sequential steps: league-specific descriptives, global z-score standardisation, global descriptives, and minute-by-minute goal and red card distributions.
-- Input: Game_Results files from all five leagues and empirical distribution files
+- Input: League averages Excel files from all five leagues (output from `calculate_league_averages.py`) and empirical distribution CSV files (output from `build_empirical_distributions.py`)
 - Output: Three Excel files — league descriptives, global descriptives, and goal/red card distributions
 
 ---
@@ -210,4 +209,4 @@ This repository is released under the MIT License. See `LICENSE.txt` for full de
 ## Contact
 
 For questions about the code or methodology, please contact:
-Travis Richardson — travis-william.richardson@uni-tuebingen.de
+Travis Richardson — [email to be added]
