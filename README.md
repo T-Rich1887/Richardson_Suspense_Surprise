@@ -1,4 +1,4 @@
-# Replication Package: Calculating Suspense, Surprise, and Shock in Football (Soccer) Matches
+# Replication Package: Suspense and Surprise in European Football
 
 This repository contains the full replication package for the paper:
 
