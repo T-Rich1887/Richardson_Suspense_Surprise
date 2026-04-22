@@ -46,6 +46,17 @@ repository/
 
 ---
 
+## Data Sources
+
+The raw data used in this paper cannot be included directly in this repository. The two data sources required for full replication are:
+
+- **Match event data** (goal and red card minutes): Collected from [fbref.com](https://fbref.com). For each league and season, match reports provide the timing of goals and red cards for all matches.
+- **Betting odds data** (pre-match closing odds and over/under totals): Collected from [oddsportal.com](https://www.oddsportal.com). Closing odds for home/draw/away outcomes and over/under lines (0.5 through 5.5 goals) are required for each match.
+
+Both sources are publicly accessible. Users wishing to replicate our exact results will need to collect the data for the top five European leagues (English Premier League, German Bundesliga, Spanish La Liga, Italian Serie A, and French Ligue 1) covering the 2010/11 to 2023/24 seasons.
+
+---
+
 ## Requirements
 
 The following Python libraries are required:
